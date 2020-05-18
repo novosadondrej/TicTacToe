@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Remoting.Messaging;
 
 namespace TicTacToe
 {
@@ -46,7 +48,7 @@ namespace TicTacToe
             tah = !tah;
             b.Enabled = false;
             pocetTahu++;
-            winner_check();
+            winnerCheck();
 
             if ((!tah) && (L3.Text.ToUpper() == "MID"))
             {
@@ -65,28 +67,36 @@ namespace TicTacToe
 
             if ((!tah) && (L3.Text.ToUpper() == "HARD"))
             {
-                pcMoveHard_O();
+                pcMoveHardO();
             }
 
         }
 
-        private void pcMoveHard_O()
+        private void pcMoveHardO()
         {
             Button move = null;
 
 
-            move = firstMove_O();
+            move = firstMoveO();
             if (move == null)
             {
-                move = winCheck_BlockCheck("O");
+                move = winCheckBlockCheck("O");
                 if (move == null)
                 {
-                    move = winCheck_BlockCheck("X");
+                    move = winCheckBlockCheck("X");
                     if (move == null)
                     {
-                        move = hledaniRohu();
+                        move = secondMoveOne("X");
                         if (move == null)
-                            move = openSpace();
+                        {
+                            move = secondMoveTwo("X");
+                            if (move == null)
+                            {
+                                move = hledaniRohu();
+                                if (move == null)
+                                    move = openSpace();
+                            }
+                        }
                     }
                 }
             }
@@ -109,12 +119,13 @@ namespace TicTacToe
         {
             Button move = null;
 
-            move = winCheck_BlockCheck("O");
+            move = winCheckBlockCheck("O");
             if (move == null)
             {
-                move = winCheck_BlockCheck("X");
+                move = winCheckBlockCheck("X");
                 if (move == null)
                 {
+
                     move = hledaniRohu();
                     if (move == null)
                         move = openSpace();
@@ -124,10 +135,35 @@ namespace TicTacToe
             move.PerformClick();
         }
 
-        private Button firstMove_O()
+        private Button firstMoveO()
         {
             if (B2.Text == "")
                 return B2;
+            else
+                return null;
+        }
+
+        private Button secondMoveOne(string mark)
+        {
+            if ((A2.Text == mark) && (B1.Text == mark) && (A1.Text == ""))
+                return A1;
+            else if ((A2.Text == mark) && (B3.Text == mark) && (A3.Text == ""))
+                return A3;
+            else if ((B1.Text == mark) && (C2.Text == mark) && (C1.Text == ""))
+                return C1;
+            else if ((B3.Text == mark) && (C2.Text == mark) && (C3.Text == ""))
+                return C3;
+               
+            else
+                return null;
+        }
+
+        private Button secondMoveTwo(string mark)
+        {
+            if ((A1.Text == mark) && (C3.Text == mark) && (A2.Text == ""))
+                return A2;
+            else if ((A3.Text == mark) && (C1.Text == mark) && (B1.Text == ""))
+                return B1;
             else
                 return null;
         }
@@ -137,7 +173,7 @@ namespace TicTacToe
            
         //}
 
-        private Button winCheck_BlockCheck(string mark)
+        private Button winCheckBlockCheck(string mark)
         {
             
             //Horizontálně
@@ -273,7 +309,7 @@ namespace TicTacToe
             return null;
         }
 
-        private void winner_check()
+        private void winnerCheck()
         {
             bool winner = false;
 
